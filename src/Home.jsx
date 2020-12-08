@@ -3,13 +3,18 @@ import "./LinkSelectorText.css"
 import { useHistory } from "react-router-dom";
 
 const Home = () =>{
-  const [jugador1, setJugador1] = useState({})
-  const [user1Selec, setUser1Select] = useState()
-  const [user2Selec, setUser2Select] = useState({})
+  const [jugador1, setJugador1] = useState("")
+  const [user1Selec, setUser1Select] = useState(null)
+  const [user2Selec, setUser2Select] = useState(null)
   const [turno, setTurno] = useState("jugador 1")
-  const [jugador2, setJugador2] = useState({})
-
-
+  const [jugador2, setJugador2] = useState("")
+  const [elGanador, setElGanador] = useState("")
+  const roca = {name : "rock", image: "https://i.ibb.co/2sPFxR5/Rock.png"}
+  const papel = {name : "papper", image: "https://i.ibb.co/GsJCY3w/Papper.png"}
+  const tijera = {name : "scissor", image: "https://i.ibb.co/fvfv4Zn/Sissors.png"}
+  const lagarto = {name : "lizzard", image: "https://i.ibb.co/44JpdYy/Lizzard.png"}
+  const spock = {name : "spock", image: "https://i.ibb.co/qNsHqn0/Spock.png"}
+  const coleccion = [roca,papel,tijera, lagarto, spock]
   const history = useHistory();
 
   useEffect(()=> {
@@ -17,80 +22,25 @@ const Home = () =>{
       setJugador1(JSON.stringify(localStorage.getItem("jugador1")))
       setJugador2(JSON.stringify(localStorage.getItem("jugador2")))
   })
-
   const Roca = ()=>{
     const name = "rock"
     const img = "https://i.ibb.co/2sPFxR5/Rock.png"
-    function leGanaA(otro){
-      return(otro.name =="lizzard"|| otro.name =="scissor")
-    }
     return(
     
           <img id="link" value = {name}  onClick={()=>setEleccionAJugador(Roca)} src={img} alt="" height="50"/>
    
     )
   } 
-  const Papel = ()=>{
-    const name = "papper"
-    const img = "https://i.ibb.co/GsJCY3w/Papper.png"
-    function leGanaA(otro){
-      return(otro.name =="spock"|| otro.name =="rock")
-    }
-    return(
-      
-        <img value = {name}  onClick={()=>setEleccionAJugador(Papel)} id="link" src={img} alt=""height="50"/>
-      
-    )
-  } 
-  const Tijera = ()=>{
-    const name = "scissor"
-    const img = "https://i.ibb.co/fvfv4Zn/Sissors.png"
-    function leGanaA(otro){
-      return(otro.name =="lizzard"|| otro.name =="papper")
-    }
-    return(
-      
-          <img value = {name} onClick={()=>setEleccionAJugador(Tijera)} id="link" src={img} alt=""height="50"/>
-     
-    )
-  }
-  const Lagarto = ()=>{
-    const name = "lizzard"
-    const img = "https://i.ibb.co/44JpdYy/Lizzard.png"
-    function leGanaA(otro){
-      return(otro.name =="spock"|| otro.name =="papper")
-    }
-    return(
-      
-          <img id="link" value = {name}  onClick={()=>setEleccionAJugador(Lagarto)} src={img} alt=""height="50"/>
-      
-    )
-  }
-
-  const Spock = ()=>{
-    const name = "spock"
-    const img = "https://i.ibb.co/qNsHqn0/Spock.png"
-    const leGanaA =(otro)=>{
-      return(otro.prop.name =="rock"|| otro.prop.name =="scissor")
-    }
-    return(
-          <img id="link" value = {name}  onClick={()=>setEleccionAJugador(()=>Spock())} src={img} alt=""height="50"/>
-          
-    )
-  }
-
   const setEleccionAJugador = (elem) =>{
     (turno == "jugador 1")? setUser1Select(elem):setUser2Select(elem)
-    console.log(user1Selec)
-    console.log(user2Selec)
   }
 
   const fijarEleccion = () => {
     setTurno("jugador 2")
   }
   function ganador(){
-    const u1s = user1Selec.props.value
-    const u2s = user2Selec.props.value
+    const u1s = user1Selec
+    const u2s = user2Selec
     let res = jugador1
     switch(u1s){
       case 'spock':
@@ -110,18 +60,43 @@ const Home = () =>{
         break;
         default: res= "empate"
     }
-    return res
+    setElGanador(res) 
   }
   const Pelea = ()=>{
-    console.log(ganador())
+    ganador()
   }
+
+  const Lista = ({elem})=>{
+    return(
+      <img id="link" onClick={()=>setEleccionAJugador(elem.name)} src={elem.image} alt=""height="50"/>
+    )
+  }
+
   const VsJugador = () =>{
     return(
       <div className="container">
         <p>{turno}</p>
-        <Roca/><Papel/><Tijera/><Lagarto/><Spock/>
+        {coleccion.map(elem=> <Lista elem={elem}/>)}
         <button onClick={fijarEleccion}>Elegir</button>
         {(user1Selec&&user2Selec)? <button onClick={Pelea}>Fight!</button> : <div/>}
+        <div>
+          {elGanador == ""? <div/>: elGanador }
+        </div>
+      </div>
+    )
+  }
+
+  const VsCPU = () =>{
+    setUser2Select(coleccion[Math.floor(Math.random() * coleccion.length)]);
+    return(
+      <div className="container">
+        <p>{turno}</p>
+        {coleccion.map(elem=> <Lista elem={elem}/>)}
+
+        {(user1Selec)? <button onClick={Pelea}>Fight!</button> : <div/>}
+        <div>
+          {elGanador == ""? <div/>: elGanador }
+        </div>
       </div>
     )
   }
@@ -134,12 +109,9 @@ const Home = () =>{
   return(
       <div>
         <button onClick={salir}>salir</button>
-          Jugador 1 :{JSON.stringify(localStorage.getItem("jugador1"))}
-          jugador 2 :{localStorage.getItem("cpu")?(
-            JSON.stringify(localStorage.getItem("cpu"))):
-            JSON.stringify(localStorage.getItem("jugador2")) 
-        } 
-          <VsJugador/>
+          Jugador 1 :{jugador1}
+          jugador 2 :{jugador2} 
+          {jugador2==="cpu"? <VsCPU/> : <VsJugador/>}
       </div>
       
   )

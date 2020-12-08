@@ -15,7 +15,7 @@ const Login = () => {
 
   const jugarCpu= () =>{
 
-    localStorage.setItem("cpu","cpu")
+    localStorage.setItem("jugador2","cpu")
     localStorage.setItem("jugador1",jugador1)
     history.push("./home")
   }
