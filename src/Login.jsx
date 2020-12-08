@@ -14,13 +14,17 @@ const Login = () => {
 
 
   const jugarCpu= () =>{
-
+    localStorage.setItem("vsCPU",true)
+    localStorage.setItem("victoriasJ1",0)
+    localStorage.setItem("victoriasJ2",0)
     localStorage.setItem("jugador2","cpu")
     localStorage.setItem("jugador1",jugador1)
     history.push("./home")
   }
   const jugarPlayer = () => {
-    
+    localStorage.setItem("vsCPU",false)
+    localStorage.setItem("victoriasJ1",0)
+    localStorage.setItem("victoriasJ2",0)
     localStorage.setItem("jugador1",jugador1);
     localStorage.setItem("jugador2",jugador2)
     history.push("/home");

@@ -9,6 +9,11 @@ const Home = () =>{
   const [turno, setTurno] = useState("jugador 1")
   const [jugador2, setJugador2] = useState("")
   const [elGanador, setElGanador] = useState("")
+  const [victoriasJ1, setvictoriasJ1] = useState(0)
+  const [victoriasJ2, setvictoriasJ2] = useState(0)
+  const [isVsCPU, setIsVsCPU] = useState(null)
+
+
   const roca = {name : "rock", image: "https://i.ibb.co/2sPFxR5/Rock.png"}
   const papel = {name : "papper", image: "https://i.ibb.co/GsJCY3w/Papper.png"}
   const tijera = {name : "scissor", image: "https://i.ibb.co/fvfv4Zn/Sissors.png"}
@@ -21,16 +26,11 @@ const Home = () =>{
 
       setJugador1(JSON.stringify(localStorage.getItem("jugador1")))
       setJugador2(JSON.stringify(localStorage.getItem("jugador2")))
+      setvictoriasJ1(JSON.parse(localStorage.getItem("victoriasJ1")))
+      setvictoriasJ2(JSON.parse(localStorage.getItem("victoriasJ2")))
+      setIsVsCPU(JSON.parse(localStorage.getItem("vsCPU")))
   })
-  const Roca = ()=>{
-    const name = "rock"
-    const img = "https://i.ibb.co/2sPFxR5/Rock.png"
-    return(
-    
-          <img id="link" value = {name}  onClick={()=>setEleccionAJugador(Roca)} src={img} alt="" height="50"/>
-   
-    )
-  } 
+
   const setEleccionAJugador = (elem) =>{
     (turno == "jugador 1")? setUser1Select(elem):setUser2Select(elem)
   }
@@ -39,8 +39,10 @@ const Home = () =>{
     setTurno("jugador 2")
   }
   function ganador(){
+    
     const u1s = user1Selec
-    const u2s = user2Selec
+    const u2s = isVsCPU? coleccion[Math.floor(Math.random() * coleccion.length)].name: user2Selec
+    console.log(u2s)
     let res = jugador1
     switch(u1s){
       case 'spock':
@@ -60,8 +62,29 @@ const Home = () =>{
         break;
         default: res= "empate"
     }
-    setElGanador(res) 
+    setElGanador(res)
+    SetPuntosAGanador(res)
+    prepararParaSiguienteDuelo()
   }
+
+  function prepararParaSiguienteDuelo(){
+    setUser1Select(null)
+    setUser2Select(null)
+    setTurno("jugador 1")
+  }
+
+  function SetPuntosAGanador (res) {
+    if(res===jugador1){
+      let puntos = victoriasJ1 + 1
+      localStorage.removeItem("victoriasJ1")
+      localStorage.setItem("victoriasJ1",puntos)
+    }else{
+      let puntos = victoriasJ2 + 1
+      localStorage.removeItem("victoriasJ2")
+      localStorage.setItem("victoriasJ2",puntos)
+    }
+  }
+
   const Pelea = ()=>{
     ganador()
   }
@@ -72,7 +95,8 @@ const Home = () =>{
     )
   }
 
-  const VsJugador = () =>{
+  const Mostrar =()=>{
+    if(!isVsCPU){
     return(
       <div className="container">
         <p>{turno}</p>
@@ -82,12 +106,13 @@ const Home = () =>{
         <div>
           {elGanador == ""? <div/>: elGanador }
         </div>
+        <div>
+          <p>victorias J1: {victoriasJ1}</p>
+          <p>victorias J2: {victoriasJ2}</p>
+        </div>
       </div>
     )
-  }
-
-  const VsCPU = () =>{
-    setUser2Select(coleccion[Math.floor(Math.random() * coleccion.length)]);
+}else{
     return(
       <div className="container">
         <p>{turno}</p>
@@ -99,7 +124,8 @@ const Home = () =>{
         </div>
       </div>
     )
-  }
+}
+}
   const salir = ()=>{
     localStorage.removeItem("jugador1")
     localStorage.removeItem("jugador2")
@@ -107,11 +133,12 @@ const Home = () =>{
     history.push("./login")
   }
   return(
+
       <div>
         <button onClick={salir}>salir</button>
           Jugador 1 :{jugador1}
           jugador 2 :{jugador2} 
-          {jugador2==="cpu"? <VsCPU/> : <VsJugador/>}
+          <Mostrar/>
       </div>
       
   )
