@@ -67,10 +67,16 @@ const Home = () =>{
           res = u2s =="scissor"|| u2s =="lizzard"? jugador1: jugador2;
         break;
         default: res= "empate"
+    }if(u2s == u1s){
+      setElGanador("empate")
+      SetPuntosAGanador("empate")
+      prepararParaSiguienteDuelo()
+    }else{
+      setElGanador(res)
+      SetPuntosAGanador(res)
+      prepararParaSiguienteDuelo()
     }
-    setElGanador(res)
-    SetPuntosAGanador(res)
-    prepararParaSiguienteDuelo()
+    
   }
 
   function prepararParaSiguienteDuelo(){
@@ -84,7 +90,7 @@ const Home = () =>{
       let puntos = victoriasJ1 + 1
       localStorage.removeItem("victoriasJ1")
       localStorage.setItem("victoriasJ1",puntos)
-    }else{
+    }else if(res===jugador2){
       let puntos = victoriasJ2 + 1
       localStorage.removeItem("victoriasJ2")
       localStorage.setItem("victoriasJ2",puntos)
@@ -141,8 +147,8 @@ const Home = () =>{
         <h2>{jugador2} eligio: </h2><img src={selecAMostrar2.image} alt=""height="50"/></div>): <div/>}
         </dir>
         <div>
-        <p>victorias J1: {victoriasJ1}</p>
-        <p>victorias J2: {victoriasJ2}</p>
+        <p><h3>victorias J1: {victoriasJ1}</h3></p>
+        <p><h3>victorias J2: {victoriasJ2}</h3></p>
         </div>
       </div>
     )
