@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./LinkSelectorText.css"
+import "./Login.css"
 import { useHistory } from "react-router-dom";
 
 const Home = () =>{
@@ -12,8 +13,9 @@ const Home = () =>{
   const [victoriasJ1, setvictoriasJ1] = useState(0)
   const [victoriasJ2, setvictoriasJ2] = useState(0)
   const [isVsCPU, setIsVsCPU] = useState(null)
-
-
+  const [selecAMostrar1, setSelecAMostrar1] = useState(null)
+  const [selecAMostrar2, setSelecAMostrar2] = useState(null)
+  
   const roca = {name : "rock", image: "https://i.ibb.co/2sPFxR5/Rock.png"}
   const papel = {name : "papper", image: "https://i.ibb.co/GsJCY3w/Papper.png"}
   const tijera = {name : "scissor", image: "https://i.ibb.co/fvfv4Zn/Sissors.png"}
@@ -40,9 +42,13 @@ const Home = () =>{
   }
   function ganador(){
     
-    const u1s = user1Selec
-    const u2s = isVsCPU? coleccion[Math.floor(Math.random() * coleccion.length)].name: user2Selec
-    console.log(u2s)
+    const u1s = user1Selec.name
+    const u2sCond = isVsCPU? (coleccion[Math.floor(Math.random() * coleccion.length)]): user2Selec
+    setUser2Select(u2sCond)
+    setSelecAMostrar1(user1Selec)
+    setSelecAMostrar2(u2sCond)
+    const u2s = u2sCond.name
+    console.log(u2sCond)
     let res = jugador1
     switch(u1s){
       case 'spock':
@@ -91,56 +97,72 @@ const Home = () =>{
 
   const Lista = ({elem})=>{
     return(
-      <img id="link" onClick={()=>setEleccionAJugador(elem.name)} src={elem.image} alt=""height="50"/>
+      <img id="link" onClick={()=>setEleccionAJugador(elem)} src={elem.image} alt=""height="50"/>
     )
   }
 
   const Mostrar =()=>{
     if(!isVsCPU){
     return(
-      <div className="container">
-        <p>{turno}</p>
+      <div >
+        <p><h3>turno: {turno== "jugador 1"? jugador1 : jugador2}</h3></p>
         {coleccion.map(elem=> <Lista elem={elem}/>)}
-        <button onClick={fijarEleccion}>Elegir</button>
-        {(user1Selec&&user2Selec)? <button onClick={Pelea}>Fight!</button> : <div/>}
+        <p>{user1Selec? <button onClick={fijarEleccion}>Siguiente</button>: <div/>}</p>
+        {(user1Selec&&user2Selec)? <p><button onClick={Pelea}>Fight!</button></p> : <div/>}
         <div>
-          {elGanador == ""? <div/>: elGanador }
+          <h3>Ganador:{elGanador == ""? <div/>: elGanador}</h3>
         </div>
+        <dir>
+        {elGanador? 
+          (<div>
+          <h4>{jugador1} eligio:</h4> <img src={selecAMostrar1.image} alt="" height="50"/>
+          <h4>{jugador2} eligio:</h4> <img src={selecAMostrar2.image} alt=""height="50"/></div>): 
+          <div/>
+        }
+        </dir>
         <div>
-          <p>victorias J1: {victoriasJ1}</p>
-          <p>victorias J2: {victoriasJ2}</p>
+          <p><h3>victorias J1: {victoriasJ1}</h3></p>
+          <p><h3>victorias J2: {victoriasJ2}</h3></p>
         </div>
       </div>
     )
 }else{
     return(
-      <div className="container">
-        <p>{turno}</p>
+      <div >
+        <p><h3>{turno}</h3></p>
         {coleccion.map(elem=> <Lista elem={elem}/>)}
-
+        <p/>
         {(user1Selec)? <button onClick={Pelea}>Fight!</button> : <div/>}
         <div>
-          {elGanador == ""? <div/>: elGanador }
+          <h3>ganador: {elGanador == ""? <div/>: elGanador } </h3>
+        </div>
+        <dir>
+        {elGanador? (<div ><h2>{jugador1} eligio: </h2><img src={selecAMostrar1.image} alt="" height="50"/>
+        <h2>{jugador2} eligio: </h2><img src={selecAMostrar2.image} alt=""height="50"/></div>): <div/>}
+        </dir>
+        <div>
+        <p>victorias J1: {victoriasJ1}</p>
+        <p>victorias J2: {victoriasJ2}</p>
         </div>
       </div>
     )
 }
 }
   const salir = ()=>{
-    localStorage.removeItem("jugador1")
-    localStorage.removeItem("jugador2")
-    localStorage.removeItem("cpu")
+    localStorage.clear()
     history.push("./login")
   }
   return(
-
-      <div>
-        <button onClick={salir}>salir</button>
-          Jugador 1 :{jugador1}
-          jugador 2 :{jugador2} 
+    <body> 
+      <div class = "container" id = "content">
+      <button onClick={salir}>SALIR</button>
+        <h3>Piedra, Papel, Tijera, Lagarto, Spock</h3>
+        
+         <p><h3>Jugador 1 :{jugador1}</h3></p>
+         <p><h3>jugador 2 :{jugador2} </h3></p>
           <Mostrar/>
       </div>
-      
+    </body>
   )
       
 }
